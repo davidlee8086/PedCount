@@ -504,8 +504,8 @@ void MovingDetection::filterMovingObjects(string address1){
 		//combine the two images and cv::blur  and cv::threshold the results
 		dst = fore & fore2;
 		cv::blur(dst, dst, cv::Size(5, 5));
-		cv::blur(dst, dst, cv::Size(10, 10));
-		cv::blur(dst, dst, cv::Size(10, 10));
+		cv::blur(dst, dst, cv::Size(5, 5));
+		cv::blur(dst, dst, cv::Size(5, 5));
 		cv::threshold(dst, dst, 50, 255, cv::THRESH_BINARY);
 
 		cv::pyrDown(dst, smallDst, cv::Size(dst.cols / 2, dst.rows / 2));
