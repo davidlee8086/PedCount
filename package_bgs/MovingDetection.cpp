@@ -10,28 +10,27 @@ MovingDetection::MovingDetection(){
 	background = 0;
 	result = 0;
 	cap = 0;
-
-	
 }
 
 
 //Menu: Function list
 void MovingDetection::menu(){
 
-
-
-	videoname = "20160401_30fps";
-	
+	videoname = "20160401_10fps";
 
 	file = "D:/ECE698_Proj/test_video_library/" + videoname + ".avi";
+	string file1 = "D:/ECE698_Proj/test_video_library/20160328_10fps.avi";
 	bool isNewVideo = true;
 	bool stillworking = true;
 	while (stillworking){
 
 		//prints out the menu options the user can choose from
 		cout << "Select one of the options below\n\n";
+
+		cout << "\t10. Test normal scene\n";
+		cout << "\t11. Test burst scene\n\n\n";
+
 		cout << "\t0. Play sample video\n";
-		cout << "\t1. Process sample video\n";
 		cout << "\t2. Try specific video to process\n";
 		cout << "\t3. Get the Accumulated Background and Extract Moving Objects\n";
 		cout << "\t4. End Program\n\n";
@@ -39,19 +38,29 @@ void MovingDetection::menu(){
 		//prompts the user for an option number then carries out a command based
 		//off of the option number provided
 		int option = readInt("Enter Option Number: ");
-		if (option == 1) {
+
+		if (option == 10) {
 			if (!file.empty()){
 				getBackground(file);
 				isNewVideo = false;
 				filterMovingObjects(file);
 			}
 		}
+		if (option == 11) {
+			if (!file1.empty()){
+				getBackground(file1);
+				isNewVideo = false;
+				filterMovingObjects(file1);
+			}
+		}
+
 		else if (option == 0){
 			readVideo(file);
 			playVideo();
 		}
 		else if (option == 2){
-			file = readString("Enter video address: ");
+			string temp = readString("Enter video address: ");
+			file = "D:/ECE698_Proj/test_video_library/" + temp;
 			isNewVideo = true;
 		}
 		else if (option == 3){
@@ -120,7 +129,7 @@ void MovingDetection::playVideo(){
 	long width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 	long height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 	cout << width << " * " << height << ", " << fps << " FPS, " << totalFrameNumber << " frames totally." << endl;
-	
+
 	cv::Mat frame;
 	cv::namedWindow("Crossroad", CV_WINDOW_AUTOSIZE);
 	while (1){
@@ -254,20 +263,14 @@ void MovingDetection::getBackground(string address){
 	cv::namedWindow("Original", CV_WINDOW_KEEPRATIO);
 
 	capSrc.read(dst);
+	capSrc.set(CV_CAP_PROP_POS_FRAMES, fps);
 	double stopwatch = 1;
-	int speedMultiplier = 100;
+	cout << "Total length is " << totalFrameNumber / fps << "\nTotal Frame is " << totalFrameNumber << endl;
 	while (1){
-		//Keep reading new frame from video till the end
-		if ((stopwatch > 0.1 * totalFrameNumber / fps)){
-			speedMultiplier = 500;
-		} else if ((stopwatch > 0.5 * totalFrameNumber / fps)){
-			speedMultiplier = 1000;
-		}
-		capSrc.set(CV_CAP_PROP_POS_MSEC, speedMultiplier * stopwatch);
 		bool bSuccess = capSrc.read(frame);
 		if (!bSuccess)
 		{
-			cout << "Cannot read the frame from video file" << endl;
+			cout << "Cannot read more frame from video file" << endl;
 			break;
 		}
 
@@ -294,11 +297,23 @@ void MovingDetection::getBackground(string address){
 		cv::imshow("Original", smallFrame);
 
 		stopwatch++;
-		if ((cv::waitKey(1) == 27) || (stopwatch >= totalFrameNumber / fps))	{
+
+		//For accelerating the accumulation process
+		if (cv::waitKey(1) == 27)	{
+			//if ((cv::waitKey(1) == 27) || (stopwatch >= totalFrameNumber / fps))	{
 			break;
 		}
+		/*
+		if (cv::waitKey(1) == 27)	{
+		break;
+		}*/
 	}
-	saveBackgroundImage("background.jpg");
+	if (videoname.empty()){
+		saveBackgroundImage("background.jpg");
+	}
+	else{
+		saveBackgroundImage(videoname + ".jpg");
+	}
 	capSrc.release();
 	cv::destroyAllWindows();
 }
@@ -320,7 +335,12 @@ cv::Mat MovingDetection::filterTotalBackground(cv::Mat frame){
 
 	//if background class variable is empty read in the background image file
 	if (background.empty()){
-		background = cv::imread("background.jpg", CV_LOAD_IMAGE_UNCHANGED);
+		if (videoname.empty()){
+			background = cv::imread("background.jpg", CV_LOAD_IMAGE_UNCHANGED);
+		}
+		else{
+			background = cv::imread(videoname + ".jpg", CV_LOAD_IMAGE_UNCHANGED);
+		}
 	}
 
 	//take the difference between the frame image and the background: dst = frame - background
@@ -377,7 +397,7 @@ description:
 */
 //void MovingDetection::filterMovingObjects(string address1, string address2){
 void MovingDetection::filterMovingObjects(string address1){
-	
+
 	// Blob Tracking Algorithm
 	BlobTracking* blobTracking;
 	blobTracking = new BlobTracking;
@@ -403,9 +423,17 @@ void MovingDetection::filterMovingObjects(string address1){
 	//
 	vector<vector<cv::Point>> contours;
 	cv::Mat smallImg;
-	cv::Mat img = cv::imread("background.jpg", CV_LOAD_IMAGE_UNCHANGED);
-	if (img.empty()){
-		getBackground(address1);
+	if (videoname.empty()){
+		cv::Mat img = cv::imread("background.jpg", CV_LOAD_IMAGE_UNCHANGED);
+		if (img.empty()){
+			getBackground(address1);
+		}
+	}
+	else{
+		cv::Mat img = cv::imread(videoname + ".jpg", CV_LOAD_IMAGE_UNCHANGED);
+		if (img.empty()){
+			getBackground(address1);
+		}
 	}
 
 	//load video from string address
@@ -422,20 +450,19 @@ void MovingDetection::filterMovingObjects(string address1){
 	//background subtractor for the frames
 	//http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html#backgroundsubtractormog2
 	cv::BackgroundSubtractorMOG2 bg = cv::BackgroundSubtractorMOG2();
-	//bg.set("history", 50);
-	bg.set("history", 50);
+	bg.set("history", 1000);
 	bg.set("nmixtures", 3);
 	bg.set("backgroundRatio", 0.7);
 	bg.set("detectShadows", false);
 
 	//background subtractor for the filterTotalBackground results
 	cv::BackgroundSubtractorMOG2 bg2 = cv::BackgroundSubtractorMOG2();
-	bg2.set("history", 50);
+	bg2.set("history", 1000);
 	bg2.set("nmixtures", 3);
 	bg2.set("backgroundRatio", 0.7);
 	bg2.set("detectShadows", false);
 
-	
+
 	//traverse through the video file
 	while (1){
 
@@ -469,19 +496,20 @@ void MovingDetection::filterMovingObjects(string address1){
 		bg2.getBackgroundImage(back2);
 		cv::erode(fore2, fore2, cv::Mat());
 
-		//cv::pyrDown(fore2,smallFore2,cv::Size(fore2.cols/2, fore2.rows/2));
-		//cv::imshow("Fore2", smallFore2);
+		//cv::Mat smallfore2;
+		//cv::pyrDown(fore2, smallfore2, cv::Size(fore2.cols / 2, fore2.rows / 2));
+		//cv::imshow("Fore2", smallfore2);
 
 
 		//combine the two images and cv::blur  and cv::threshold the results
 		dst = fore & fore2;
+		cv::blur(dst, dst, cv::Size(5, 5));
 		cv::blur(dst, dst, cv::Size(10, 10));
 		cv::blur(dst, dst, cv::Size(10, 10));
-		cv::blur(dst, dst, cv::Size(10, 10));
-		cv::threshold(dst, dst, 20, 255, cv::THRESH_BINARY);
+		cv::threshold(dst, dst, 50, 255, cv::THRESH_BINARY);
 
-		cv::pyrDown(dst,smallDst,cv::Size(dst.cols/2, dst.rows/2));
-		
+		cv::pyrDown(dst, smallDst, cv::Size(dst.cols / 2, dst.rows / 2));
+
 		// Perform blob tracking
 		blobTracking->process(frame, dst, img_blob);
 		// Perform vehicle counting
@@ -500,27 +528,26 @@ void MovingDetection::filterMovingObjects(string address1){
 		vector<vector<cv::Point>> contours_poly(contours.size());
 		vector<cv::Rect> boundRect(contours.size());
 		for (int i = 0; i < contours.size(); i++){
-			cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
-			boundRect[i] = boundingRect(cv::Mat(contours_poly[i]));
-			//cv::Rect intersect = boundRect[i] & streetcurb;
+		cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
+		boundRect[i] = boundingRect(cv::Mat(contours_poly[i]));
+		//cv::Rect intersect = boundRect[i] & streetcurb;
 
 		}
 
 		// Draw polygonal contour and bonding rects
 		for (int i = 0; i < contours.size(); i++){
-			//Choose the color pf object detection box
-			//Scalar(B,G,R[,alpha])
-			cv::Scalar color = cv::Scalar(255, 0, 0); //Blue
-			drawContours(frame, contours_poly, i, color, 1, 8, vector<cv::Vec4i>(), 0, cv::Point());
-			rectangle(frame, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
-			box = cv::Rect(boundRect[i].tl(), boundRect[i].br());
+		//Choose the color pf object detection box
+		//Scalar(B,G,R[,alpha])
+		cv::Scalar color = cv::Scalar(255, 0, 0); //Blue
+		drawContours(frame, contours_poly, i, color, 1, 8, vector<cv::Vec4i>(), 0, cv::Point());
+		rectangle(frame, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
+		box = cv::Rect(boundRect[i].tl(), boundRect[i].br());
 		}
 		*/
 
 
 		cv::imshow("Foreground Mask", smallDst);
 		cv::moveWindow("Foreground Mask", 1095, 0);
-
 		if (cv::waitKey(1) >= 0){
 			break;
 		}

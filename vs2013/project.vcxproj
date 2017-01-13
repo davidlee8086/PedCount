@@ -85,8 +85,6 @@
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\package_analysis\VehicleCouting.cpp" />
     <ClCompile Include="..\package_bgs\MovingDetection.cpp" />
-    <ClCompile Include="..\package_bgs\PBAS\PBAS.cpp" />
-    <ClCompile Include="..\package_bgs\PBAS\PixelBasedAdaptiveSegmenter.cpp" />
     <ClCompile Include="..\package_tracking\BlobTracking.cpp" />
     <ClCompile Include="..\package_tracking\cvblob\cvaux.cpp" />
     <ClCompile Include="..\package_tracking\cvblob\cvblob.cpp" />
@@ -97,10 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\package_analysis\VehicleCouting.h" />
-    <ClInclude Include="..\package_bgs\IBGS.h" />
     <ClInclude Include="..\package_bgs\MovingDetection.h" />
-    <ClInclude Include="..\package_bgs\PBAS\PBAS.h" />
-    <ClInclude Include="..\package_bgs\PBAS\PixelBasedAdaptiveSegmenter.h" />
     <ClInclude Include="..\package_tracking\BlobTracking.h" />
     <ClInclude Include="..\package_tracking\cvblob\cvblob.h" />
   </ItemGroup>

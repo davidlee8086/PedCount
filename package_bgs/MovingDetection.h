@@ -36,7 +36,6 @@
 #include <ctype.h>
 #include <windows.h>
 
-#include "../package_bgs/PBAS/PixelBasedAdaptiveSegmenter.h"
 #include "../package_tracking/BlobTracking.h"
 #include "../package_analysis/VehicleCouting.h"
 
