@@ -17,9 +17,12 @@ enum LaneOrientation
 
 enum VehiclePosition
 {
-  VP_NONE = 0,
-  VP_A  = 1,
-  VP_B  = 2
+	VP_NONE = 0,
+	A_Left = 1,
+	AB = 2,
+	BC = 3,
+	CD = 4,
+	D_Right = 5,
 };
 
 class VehicleCouting
@@ -39,12 +42,24 @@ private:
   LaneOrientation laneOrientation;
   long countAB;
   long countBA;
+  long countCD;
+  long countDC;
   int img_w;
   int img_h;
   int showAB;
-  double slope;
-  double intercept;
-
+  double slope_A;
+  double intercept_A;
+  double slope_B;
+  double intercept_B;
+  double slope_C;
+  double intercept_C;
+  double slope_D;
+  double intercept_D;
+  double distance_to_line_A;
+  double distance_to_line_B;
+  double distance_to_line_C;
+  double distance_to_line_D;
+  
 public:
   VehicleCouting();
   ~VehicleCouting();
@@ -53,6 +68,9 @@ public:
   void setInput(const cv::Mat &i);
   void setTracks(const cvb::CvTracks &t);
   void process();
+  std::vector<int> id_List;
+  std::vector<int> direction_List;
+  bool idExisted(int id,int direction);
 
 private:
 	VehiclePosition getVehiclePosition(const CvPoint2D64f centroid, cvb::CvID id);

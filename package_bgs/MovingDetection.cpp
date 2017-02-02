@@ -16,17 +16,17 @@ MovingDetection::MovingDetection(){
 //Menu: Function list
 void MovingDetection::menu(){
 
-	videoname = "20160401_10fps";
+	videoname = "20160401_150426";
 
-	file = "D:/ECE698_Proj/test_video_library/" + videoname + ".avi";
-	string file1 = "D:/ECE698_Proj/test_video_library/20160328_10fps.avi";
+	string file1 = "D:/ECE698_Proj/test_video_library/" + videoname + ".avi";
+	 file = "D:/ECE698_Proj/test_video_library/20160401_144653.avi"; 
 	bool isNewVideo = true;
 	bool stillworking = true;
 	while (stillworking){
 
 		//prints out the menu options the user can choose from
 		cout << "Select one of the options below\n\n";
-
+		
 		cout << "\t10. Test normal scene\n";
 		cout << "\t11. Test burst scene\n\n\n";
 
@@ -38,7 +38,7 @@ void MovingDetection::menu(){
 		//prompts the user for an option number then carries out a command based
 		//off of the option number provided
 		int option = readInt("Enter Option Number: ");
-
+		
 		if (option == 10) {
 			if (!file.empty()){
 				getBackground(file);
@@ -129,7 +129,7 @@ void MovingDetection::playVideo(){
 	long width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 	long height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 	cout << width << " * " << height << ", " << fps << " FPS, " << totalFrameNumber << " frames totally." << endl;
-
+	
 	cv::Mat frame;
 	cv::namedWindow("Crossroad", CV_WINDOW_AUTOSIZE);
 	while (1){
@@ -261,10 +261,9 @@ void MovingDetection::getBackground(string address){
 
 	cv::namedWindow("Accumulated Frame", CV_WINDOW_KEEPRATIO);
 	cv::namedWindow("Original", CV_WINDOW_KEEPRATIO);
-
+	capSrc.set(CV_CAP_PROP_POS_FRAMES, 3 * fps);
 	capSrc.read(dst);
-	capSrc.set(CV_CAP_PROP_POS_FRAMES, fps);
-	double stopwatch = 1;
+	double timeindex = 1; 
 	cout << "Total length is " << totalFrameNumber / fps << "\nTotal Frame is " << totalFrameNumber << endl;
 	while (1){
 		bool bSuccess = capSrc.read(frame);
@@ -273,8 +272,11 @@ void MovingDetection::getBackground(string address){
 			cout << "Cannot read more frame from video file" << endl;
 			break;
 		}
-
-		//
+		
+		/*if (timeindex > 0.25 * totalFrameNumber / fps) {
+			capSrc.set(CV_CAP_PROP_POS_MSEC, 500 * timeindex);
+		}*/
+		
 		if (alpha < 0.001){
 			alpha = 0.001;
 		}
@@ -296,23 +298,21 @@ void MovingDetection::getBackground(string address){
 		cv::imshow("Accumulated Frame", dst);
 		cv::imshow("Original", smallFrame);
 
-		stopwatch++;
+		/*
+		timeindex++;
 
 		//For accelerating the accumulation process
-		if (cv::waitKey(1) == 27)	{
-			//if ((cv::waitKey(1) == 27) || (stopwatch >= totalFrameNumber / fps))	{
+		if ((cv::waitKey(1) == 27) || ((timeindex > 200) && (timeindex > 0.25 * totalFrameNumber / fps)))	{
+		*/
+		if (cv::waitKey(1) == 27) { 
 			break;
 		}
-		/*
-		if (cv::waitKey(1) == 27)	{
-		break;
-		}*/
 	}
 	if (videoname.empty()){
 		saveBackgroundImage("background.jpg");
 	}
 	else{
-		saveBackgroundImage(videoname + ".jpg");
+		saveBackgroundImage(videoname+".jpg");
 	}
 	capSrc.release();
 	cv::destroyAllWindows();
@@ -336,9 +336,8 @@ cv::Mat MovingDetection::filterTotalBackground(cv::Mat frame){
 	//if background class variable is empty read in the background image file
 	if (background.empty()){
 		if (videoname.empty()){
-			background = cv::imread("background.jpg", CV_LOAD_IMAGE_UNCHANGED);
-		}
-		else{
+			background = cv::imread("background.jpg",	 CV_LOAD_IMAGE_UNCHANGED);
+		}else{
 			background = cv::imread(videoname + ".jpg", CV_LOAD_IMAGE_UNCHANGED);
 		}
 	}
@@ -397,7 +396,7 @@ description:
 */
 //void MovingDetection::filterMovingObjects(string address1, string address2){
 void MovingDetection::filterMovingObjects(string address1){
-
+	
 	// Blob Tracking Algorithm
 	BlobTracking* blobTracking;
 	blobTracking = new BlobTracking;
@@ -435,7 +434,7 @@ void MovingDetection::filterMovingObjects(string address1){
 			getBackground(address1);
 		}
 	}
-
+	
 	//load video from string address
 	cv::VideoCapture capSrc(address1);
 	//get the frame rate of the video
@@ -462,7 +461,7 @@ void MovingDetection::filterMovingObjects(string address1){
 	bg2.set("backgroundRatio", 0.7);
 	bg2.set("detectShadows", false);
 
-
+	
 	//traverse through the video file
 	while (1){
 
@@ -508,8 +507,8 @@ void MovingDetection::filterMovingObjects(string address1){
 		cv::blur(dst, dst, cv::Size(5, 5));
 		cv::threshold(dst, dst, 50, 255, cv::THRESH_BINARY);
 
-		cv::pyrDown(dst, smallDst, cv::Size(dst.cols / 2, dst.rows / 2));
-
+		cv::pyrDown(dst,smallDst,cv::Size(dst.cols/2, dst.rows/2));
+		
 		// Perform blob tracking
 		blobTracking->process(frame, dst, img_blob);
 		// Perform vehicle counting
@@ -528,24 +527,24 @@ void MovingDetection::filterMovingObjects(string address1){
 		vector<vector<cv::Point>> contours_poly(contours.size());
 		vector<cv::Rect> boundRect(contours.size());
 		for (int i = 0; i < contours.size(); i++){
-		cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
-		boundRect[i] = boundingRect(cv::Mat(contours_poly[i]));
-		//cv::Rect intersect = boundRect[i] & streetcurb;
+			cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
+			boundRect[i] = boundingRect(cv::Mat(contours_poly[i]));
+			//cv::Rect intersect = boundRect[i] & streetcurb;
 
 		}
 
 		// Draw polygonal contour and bonding rects
 		for (int i = 0; i < contours.size(); i++){
-		//Choose the color pf object detection box
-		//Scalar(B,G,R[,alpha])
-		cv::Scalar color = cv::Scalar(255, 0, 0); //Blue
-		drawContours(frame, contours_poly, i, color, 1, 8, vector<cv::Vec4i>(), 0, cv::Point());
-		rectangle(frame, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
-		box = cv::Rect(boundRect[i].tl(), boundRect[i].br());
+			//Choose the color pf object detection box
+			//Scalar(B,G,R[,alpha])
+			cv::Scalar color = cv::Scalar(255, 0, 0); //Blue
+			drawContours(frame, contours_poly, i, color, 1, 8, vector<cv::Vec4i>(), 0, cv::Point());
+			rectangle(frame, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
+			box = cv::Rect(boundRect[i].tl(), boundRect[i].br());
 		}
 		*/
 
-
+		
 		cv::imshow("Foreground Mask", smallDst);
 		cv::moveWindow("Foreground Mask", 1095, 0);
 		if (cv::waitKey(1) >= 0){

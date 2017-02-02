@@ -1,0 +1,33 @@
+﻿生成启动时间为 2/2/2017 6:43:32 PM。
+     1>项目“D:\Documents\GitHub\PedCount\vs2013\project.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /I../include/opencv /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\package_bgs\MovingDetection.cpp
+         MovingDetection.cpp
+     1>..\package_bgs\MovingDetection.cpp(127): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_bgs\MovingDetection.cpp(129): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
+     1>..\package_bgs\MovingDetection.cpp(130): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
+     1>..\package_bgs\MovingDetection.cpp(178): warning C4018: “<”: 有符号/无符号不匹配
+     1>..\package_bgs\MovingDetection.cpp(219): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_bgs\MovingDetection.cpp(250): warning C4244: “=”: 从“double”转换到“long”，可能丢失数据
+     1>..\package_bgs\MovingDetection.cpp(252): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
+     1>..\package_bgs\MovingDetection.cpp(253): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"../vehicle_counting_x86.exe" /INCREMENTAL:NO /NOLOGO comctl32.lib VFW32.lib IlmImf.lib libjasper.lib libjpeg.lib libpng.lib libtiff.lib opencv_calib3d2413.lib opencv_calib3d2413d.lib opencv_contrib2413.lib opencv_contrib2413d.lib opencv_core2413.lib opencv_core2413d.lib opencv_features2d2413.lib opencv_features2d2413d.lib opencv_flann2413.lib opencv_flann2413d.lib opencv_gpu2413.lib opencv_gpu2413d.lib opencv_highgui2413.lib opencv_highgui2413d.lib opencv_imgproc2413.lib opencv_imgproc2413d.lib opencv_legacy2413.lib opencv_legacy2413d.lib opencv_ml2413.lib opencv_ml2413d.lib opencv_nonfree2413.lib opencv_nonfree2413d.lib opencv_objdetect2413.lib opencv_objdetect2413d.lib opencv_ocl2413.lib opencv_ocl2413d.lib opencv_photo2413.lib opencv_photo2413d.lib opencv_stitching2413.lib opencv_stitching2413d.lib opencv_superres2413.lib opencv_superres2413d.lib opencv_ts2413.lib opencv_ts2413d.lib opencv_video2413.lib opencv_video2413d.lib opencv_videostab2413.lib opencv_videostab2413d.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"../vehicle_counting_x86.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"../vehicle_counting_x86.lib" /MACHINE:X86 /SAFESEH Release\main.obj
+         Release\VehicleCouting.obj
+         Release\MovingDetection.obj
+         Release\BlobTracking.obj
+         Release\cvaux.obj
+         Release\cvblob.obj
+         Release\cvcolor.obj
+         Release\cvcontour.obj
+         Release\cvlabel.obj
+         Release\cvtrack.obj
+         正在生成代码
+     1>d:\documents\github\pedcount\package_tracking\cvblob\cvlabel.cpp(361): warning C4715: “cvLabel”: 不是所有的控件路径都返回值
+         已完成代码的生成
+         project.vcxproj -> D:\Documents\GitHub\PedCount\vs2013\../vehicle_counting_x86.exe
+     1>已完成生成项目“D:\Documents\GitHub\PedCount\vs2013\project.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:04.48

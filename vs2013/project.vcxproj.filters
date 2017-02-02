@@ -22,13 +22,13 @@
     <ClCompile Include="..\package_tracking\cvblob\cvtrack.cpp">
       <Filter>package_tracking\cvblob</Filter>
     </ClCompile>
+    <ClCompile Include="..\package_analysis\VehicleCouting.cpp">
+      <Filter>package_analysis</Filter>
+    </ClCompile>
     <ClCompile Include="..\package_bgs\MovingDetection.cpp">
       <Filter>package_bgs</Filter>
     </ClCompile>
     <ClCompile Include="..\main.cpp" />
-    <ClCompile Include="..\package_analysis\VehicleCouting.cpp">
-      <Filter>package_analysis</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="package_bgs">
@@ -51,11 +51,11 @@
     <ClInclude Include="..\package_tracking\cvblob\cvblob.h">
       <Filter>package_tracking\cvblob</Filter>
     </ClInclude>
-    <ClInclude Include="..\package_bgs\MovingDetection.h">
-      <Filter>package_bgs</Filter>
-    </ClInclude>
     <ClInclude Include="..\package_analysis\VehicleCouting.h">
       <Filter>package_analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\package_bgs\MovingDetection.h">
+      <Filter>package_bgs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
