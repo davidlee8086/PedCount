@@ -1,18 +1,25 @@
-﻿生成启动时间为 2/2/2017 6:43:32 PM。
+﻿生成启动时间为 2/24/2017 12:22:48 AM。
      1>项目“D:\Documents\GitHub\PedCount\vs2013\project.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /I../include/opencv /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\package_bgs\MovingDetection.cpp
-         MovingDetection.cpp
-     1>..\package_bgs\MovingDetection.cpp(127): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
-     1>..\package_bgs\MovingDetection.cpp(129): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
-     1>..\package_bgs\MovingDetection.cpp(130): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
-     1>..\package_bgs\MovingDetection.cpp(178): warning C4018: “<”: 有符号/无符号不匹配
-     1>..\package_bgs\MovingDetection.cpp(219): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
-     1>..\package_bgs\MovingDetection.cpp(250): warning C4244: “=”: 从“double”转换到“long”，可能丢失数据
-     1>..\package_bgs\MovingDetection.cpp(252): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
-     1>..\package_bgs\MovingDetection.cpp(253): warning C4244: “初始化”: 从“double”转换到“long”，可能丢失数据
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /I../include/opencv /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\package_analysis\VehicleCouting.cpp
+         VehicleCouting.cpp
+     1>d:\program files (x86)\opencv2413\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : 参见“fopen”的声明
+     1>..\package_analysis\VehicleCouting.cpp(295): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(296): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(311): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(312): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(325): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(326): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(339): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(340): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>..\package_analysis\VehicleCouting.cpp(411): warning C4018: “<”: 有符号/无符号不匹配
+     1>..\package_analysis\VehicleCouting.cpp(453): warning C4800: “int”: 将值强制为布尔值“true”或“false”(性能警告)
+     1>..\package_analysis\VehicleCouting.cpp(456): warning C4800: “int”: 将值强制为布尔值“true”或“false”(性能警告)
+     1>..\package_analysis\VehicleCouting.cpp(457): warning C4800: “int”: 将值强制为布尔值“true”或“false”(性能警告)
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"../vehicle_counting_x86.exe" /INCREMENTAL:NO /NOLOGO comctl32.lib VFW32.lib IlmImf.lib libjasper.lib libjpeg.lib libpng.lib libtiff.lib opencv_calib3d2413.lib opencv_calib3d2413d.lib opencv_contrib2413.lib opencv_contrib2413d.lib opencv_core2413.lib opencv_core2413d.lib opencv_features2d2413.lib opencv_features2d2413d.lib opencv_flann2413.lib opencv_flann2413d.lib opencv_gpu2413.lib opencv_gpu2413d.lib opencv_highgui2413.lib opencv_highgui2413d.lib opencv_imgproc2413.lib opencv_imgproc2413d.lib opencv_legacy2413.lib opencv_legacy2413d.lib opencv_ml2413.lib opencv_ml2413d.lib opencv_nonfree2413.lib opencv_nonfree2413d.lib opencv_objdetect2413.lib opencv_objdetect2413d.lib opencv_ocl2413.lib opencv_ocl2413d.lib opencv_photo2413.lib opencv_photo2413d.lib opencv_stitching2413.lib opencv_stitching2413d.lib opencv_superres2413.lib opencv_superres2413d.lib opencv_ts2413.lib opencv_ts2413d.lib opencv_video2413.lib opencv_video2413d.lib opencv_videostab2413.lib opencv_videostab2413d.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"../vehicle_counting_x86.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"../vehicle_counting_x86.lib" /MACHINE:X86 /SAFESEH Release\main.obj
+         Release\Record.obj
          Release\VehicleCouting.obj
          Release\MovingDetection.obj
          Release\BlobTracking.obj
@@ -30,4 +37,4 @@
 
 生成成功。
 
-已用时间 00:00:04.48
+已用时间 00:00:04.77

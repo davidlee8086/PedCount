@@ -1,12 +1,16 @@
 ﻿#pragma once
 
 #include <windows.h>
+#include <fstream>
 #include <iostream>
+#include <vector>
 #include <string>
 #include <cv.h>
 #include <highgui.h>
 #include <math.h> 
 #include "../package_tracking/cvblob/cvblob.h"
+
+//#include "../package_bgs/MovingDetection.h"
 
 enum LaneOrientation
 {
@@ -60,6 +64,8 @@ private:
   double distance_to_line_C;
   double distance_to_line_D;
   
+  
+
 public:
   VehicleCouting();
   ~VehicleCouting();
@@ -67,10 +73,21 @@ public:
   int it_indicator;
   void setInput(const cv::Mat &i);
   void setTracks(const cvb::CvTracks &t);
-  void process();
+  void process(int frameNumber);
   std::vector<int> id_List;
   std::vector<int> direction_List;
   bool idExisted(int id,int direction);
+
+
+// imported from signal detection
+  bool isRunning = true;
+  std::string command = "";
+  std::ofstream record, signalChange;
+  std::string fileName, fileType;
+  bool everySecond;
+  int fps = 0;
+  int lightDisplayLocationX;
+  int x1, y1;// location of green light
 
 private:
 	VehiclePosition getVehiclePosition(const CvPoint2D64f centroid, cvb::CvID id);

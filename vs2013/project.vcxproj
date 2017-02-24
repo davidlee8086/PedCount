@@ -83,6 +83,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\package_analysis\Record.cpp" />
     <ClCompile Include="..\package_analysis\VehicleCouting.cpp" />
     <ClCompile Include="..\package_bgs\MovingDetection.cpp" />
     <ClCompile Include="..\package_tracking\BlobTracking.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="..\package_tracking\cvblob\cvtrack.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\package_analysis\Record.h" />
     <ClInclude Include="..\package_analysis\VehicleCouting.h" />
     <ClInclude Include="..\package_bgs\MovingDetection.h" />
     <ClInclude Include="..\package_tracking\BlobTracking.h" />

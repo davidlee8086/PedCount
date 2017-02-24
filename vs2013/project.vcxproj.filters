@@ -29,6 +29,9 @@
       <Filter>package_bgs</Filter>
     </ClCompile>
     <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\package_analysis\Record.cpp">
+      <Filter>package_analysis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="package_bgs">
@@ -56,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="..\package_bgs\MovingDetection.h">
       <Filter>package_bgs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\package_analysis\Record.h">
+      <Filter>package_analysis</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

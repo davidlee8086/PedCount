@@ -71,10 +71,9 @@ VehicleCouting::~VehicleCouting()
   std::cout << "~VehicleCouting()" << std::endl;
 }
 //--------------------------------------------------------------------------------
-void VehicleCouting::setInput(const cv::Mat &i)
-{
-  //i.copyTo(img_input);
-  img_input = i;
+void VehicleCouting::setInput(const cv::Mat &img_blob) {
+	//img_blob.copyTo(img_input);
+	img_input = img_blob;
 }
 //--------------------------------------------------------------------------------
 void VehicleCouting::setTracks(const cvb::CvTracks &t)
@@ -130,9 +129,11 @@ VehiclePosition VehicleCouting::getVehiclePosition(const CvPoint2D64f centroid, 
 	return vehiclePosition;
 }
 //--------------------------------------------------------------------------------
-void VehicleCouting::process()
-{
-  if (img_input.empty()){
+void VehicleCouting::process(int frameNumber) {
+	// imported from signal detection
+	
+	
+	if (img_input.empty()){
 		return;
 	}
     
@@ -143,10 +144,8 @@ void VehicleCouting::process()
 
   //--------------------------------------------------------------------------
 
-  if(FAV1::use_roi == true && FAV1::roi_defined == false && firstTime == true)
-  {
-    do
-    {
+  if(FAV1::use_roi == true && FAV1::roi_defined == false && firstTime == true) {
+    do {
       cv::putText(img_input, "Please, set the counting line", cv::Point(1100,600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255), 2);
       cv::imshow("PedestrianCount", img_input);
       FAV1::img_input1 = new IplImage(img_input);
@@ -154,14 +153,14 @@ void VehicleCouting::process()
       key = cvWaitKey(0);
       delete FAV1::img_input1;
 
-      if(FAV1::roi_defined)
-      {
+      if(FAV1::roi_defined) {
         std::cout << "Counting line defined (" << FAV1::line_B_x0 << "," << FAV1::line_B_y0 << "," << FAV1::line_B_x1 << "," << FAV1::line_B_y1 << ")" << std::endl;
         break;
       }
       else
         std::cout << "Counting line undefined!" << std::endl;
-    }while(1);
+    }
+	while(1);
   }
   // Default, draw the line from XML
   if (FAV1::use_roi == true && FAV1::roi_defined == true){
@@ -172,34 +171,35 @@ void VehicleCouting::process()
   }
     
   bool ROI_OK = false;
-  
-  if(FAV1::use_roi == true && FAV1::roi_defined == true)
-    ROI_OK = true;
 
-  if(ROI_OK)
+  if (FAV1::use_roi == true && FAV1::roi_defined == true)
+	  ROI_OK = true;
+
+  if (ROI_OK)
   {
-    laneOrientation = LO_NONE;
+	  laneOrientation = LO_NONE;
 
-    if(abs(FAV1::line_B_x0 - FAV1::line_B_x1) < abs(FAV1::line_B_y0 - FAV1::line_B_y1))
-    {
-      if(!firstTime)
-		  //cv::putText(img_input, "Vertical", cv::Point(1100, img_h - 140), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-		  laneOrientation = LO_HORIZONTAL;
-	}
+	  if (abs(FAV1::line_B_x0 - FAV1::line_B_x1) < abs(FAV1::line_B_y0 - FAV1::line_B_y1))
+	  {
+		  if (!firstTime)
+			  //cv::putText(img_input, "Vertical", cv::Point(1100, img_h - 140), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+			  laneOrientation = LO_HORIZONTAL;
+	  }
 
-    if(abs(FAV1::line_B_x0 - FAV1::line_B_x1) > abs(FAV1::line_B_y0 - FAV1::line_B_y1))
-    {
-		if(!firstTime)
-		//cv::putText(img_input, "Horizontal", cv::Point(1100, img_h - 140), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-		laneOrientation = LO_VERTICAL;
-		cv::putText(img_input, "A", cv::Point(FAV1::line_A_x1 + 3, FAV1::line_A_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-		cv::putText(img_input, "B", cv::Point(FAV1::line_B_x1 + 3, FAV1::line_B_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-		cv::putText(img_input, "C", cv::Point(FAV1::line_C_x1 + 3, FAV1::line_C_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-		cv::putText(img_input, "D", cv::Point(FAV1::line_D_x1 + 3, FAV1::line_D_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-	}
+	  if (abs(FAV1::line_B_x0 - FAV1::line_B_x1) > abs(FAV1::line_B_y0 - FAV1::line_B_y1))
+	  {
+		  if (!firstTime)
+			  //cv::putText(img_input, "Horizontal", cv::Point(1100, img_h - 140), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+			  laneOrientation = LO_VERTICAL;
+		  cv::putText(img_input, "A", cv::Point(FAV1::line_A_x1 + 3, FAV1::line_A_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+		  cv::putText(img_input, "B", cv::Point(FAV1::line_B_x1 + 3, FAV1::line_B_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+		  cv::putText(img_input, "C", cv::Point(FAV1::line_C_x1 + 3, FAV1::line_C_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+		  cv::putText(img_input, "D", cv::Point(FAV1::line_D_x1 + 3, FAV1::line_D_y1 + 25), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+	  }
   }
 
   //--------------------------------------------------------------------------
+
 
   int it_indicator = 0;
 	// iterator: std::pair;
@@ -246,7 +246,7 @@ void VehicleCouting::process()
 				// Push points back in list "centroids2"
 				centroids2.push_back(*it3);
 				//Real-time printing the id, location)
-				std::string label = "id=" + std::to_string(int(id2)) + " (" + std::to_string(int(centroid.x)) + "," + std::to_string(int(centroid.y)) + ")";
+				std::string label = " (" + std::to_string(int(centroid.x)) + "," + std::to_string(int(centroid.y)) + ")";
 				//std::string label = " (" + std::to_string(int(centroid.x)) + "," + std::to_string(int(centroid.y)) + ")";
 				// args: Input, Label, Print_Location, Font, Size, Color, Thinkness
 				cv::putText(img_input, label, cv::Point(int(centroid.x) + 20, int(centroid.y) - 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255), 2);
@@ -274,30 +274,29 @@ void VehicleCouting::process()
 
     //----------------------------------------------------------------------------
 
-    if(track->inactive == 0)
-    {
-      if(positions.count(id) > 0)
-      {
+    if(track->inactive == 0) {
+      if(positions.count(id) > 0) {
+
         std::map<cvb::CvID, VehiclePosition>::iterator it2 = positions.find(id);
         VehiclePosition old_position = it2->second;
 		VehiclePosition current_position = getVehiclePosition(centroid, id);
 
-		std::string xing = "id=" + std::to_string(int(id)) + " (" + std::to_string(int(centroid.x)) + "," + std::to_string(int(centroid.y)) + ")";
-
+		std::string xing = " (" + std::to_string(int(centroid.x)) + "," + std::to_string(int(centroid.y)) + ")";
 
 		// When the position changed,
 		// If crossing line the distance to line should change slightly.
 		if (current_position != old_position){
 			// 1. Crossing from A to B
 			if ((!idExisted(int(id), 1)) && abs(distance_to_line_A) < 5 && old_position == A_Left && current_position == AB && (centroid.x >= FAV1::line_A_x0) && (centroid.x <= FAV1::line_A_x1)) {
+				
 				countAB++;
-				// Record the pedestrian id
-				id_List.push_back(int(id));
+				id_List.push_back(int(id));// Record the pedestrian id
+				
 				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(255, 255, 255), 2);
 				cv::putText(img_input, xing, cv::Point(1050, centroid.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 255), 2);
-				std::cout << "id=" << id << " crossing from A to B (" << int(centroid.x) << ", " << int(centroid.y) << ")" << std::endl;
+				std::cout << "\nFrame " << frameNumber << "\t\tid=" << id << " crossing from A to B (" << int(centroid.x) << ", " << int(centroid.y) << ")\n" << std::endl;
 				// Save the crossing snapshots
-				std::string address = xing + "-AB.jpg";
+				std::string address = std::to_string(frameNumber) + "-Frame-AB-" + xing  + ".jpg";
 				bool bSuccess = cv::imwrite(address, img_input);
 				if (!bSuccess){
 					std::cout << "Error: Failed to save the image" << std::endl;
@@ -307,14 +306,13 @@ void VehicleCouting::process()
 			if ((!idExisted(int(id), 2)) && (abs(distance_to_line_B) < 5) && old_position == BC && current_position == AB && (centroid.x >= FAV1::line_B_x0) && (centroid.x <= FAV1::line_B_x1)) {
 				
 				countBA++;
-				// Record the pedestrian id
-				id_List.push_back(int(id));
+				id_List.push_back(int(id));// Record the pedestrian id
 				
-				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(0, 0, 0), 2);
+				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(255, 255, 255), 2);
 				cv::putText(img_input, xing, cv::Point(1050, centroid.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 255), 2);
-				std::cout << "id=" << id << " crossing from B to A (" << int(centroid.x) << ", " << int(centroid.y) << ")" << std::endl;
+				std::cout << "\nFrame " << frameNumber << "\t\tid=" << id << " crossing from B to A (" << int(centroid.x) << ", " << int(centroid.y) << ")\n" << std::endl;
 				// Save the crossing snapshots
-				std::string address = xing + "-BA.jpg";
+				std::string address = std::to_string(frameNumber)  + "-Frame-BA-" + xing + ".jpg";
 				bool bSuccess = cv::imwrite(address, img_input);
 				if (!bSuccess){
 					std::cout << "Error: Failed to save the image" << std::endl;
@@ -324,11 +322,11 @@ void VehicleCouting::process()
 				countCD++;
 				// Record the pedestrian id
 				id_List.push_back(int(id));
-				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(0, 0, 0), 2);
+				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(255, 255, 255), 2);
 				cv::putText(img_input, xing, cv::Point(1050, centroid.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 255), 2);
-				std::cout << "id=" << id << " crossing from C to D (" << int(centroid.x) << ", " << int(centroid.y) << ")" << std::endl;
+				std::cout << "\nFrame " << frameNumber << "\t\tid=" << id << " crossing from C to D (" << int(centroid.x) << ", " << int(centroid.y) << ")\n" << std::endl;
 				// Save the crossing snapshots
-				std::string address = xing + "-CD.jpg";
+				std::string address = std::to_string(frameNumber) + "-Frame-CD-" + xing +  ".jpg";
 				bool bSuccess = cv::imwrite(address, img_input);
 				if (!bSuccess){
 					std::cout << "Error: Failed to save the image" << std::endl;
@@ -336,13 +334,13 @@ void VehicleCouting::process()
 			}// 4. Crossing from D to C
 			if ((!idExisted(int(id), 4)) && abs(distance_to_line_D) < 5 && old_position == D_Right && current_position == CD && (centroid.x >= FAV1::line_D_x0) && (centroid.x <= FAV1::line_D_x1)) {
 				countDC++;
-				// Record the pedestrian id
-				id_List.push_back(int(id));
-				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(0, 0, 0), 2);
+				id_List.push_back(int(id));// Record the pedestrian id
+				
+				cv::circle(img_input, cv::Point(centroid.x, centroid.y), 3, cv::Scalar(255, 255, 255), 2);
 				cv::putText(img_input, xing, cv::Point(1050, centroid.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 255), 2);
-				std::cout << "id=" << id << " crossing from D to C (" << int(centroid.x) << ", " << int(centroid.y) << ")" << std::endl;
+				std::cout << "\nFrame " << frameNumber << "\t\tid=" << id << " crossing from D to C (" << int(centroid.x) << ", " << int(centroid.y) << ")\n" << std::endl;
 				// Save the crossing snapshots
-				std::string address = xing + "DC.jpg";
+				std::string address = std::to_string(frameNumber) + "-Frame-DC-" + xing  + ".jpg";
 				bool bSuccess = cv::imwrite(address, img_input);
 				if (!bSuccess){
 					std::cout << "Error: Failed to save the image" << std::endl;
@@ -381,35 +379,34 @@ void VehicleCouting::process()
   std::string total = "Total: " + std::to_string(countAB + countBA + countCD + countDC);
 
 
-  if(showAB == 0)
-  {
+  if(showAB == 0) {
 	//A->B and B->A are both displayed.
-	  cv::putText(img_input, countABstr, cv::Point(5, 75), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-	  cv::putText(img_input, countBAstr, cv::Point(5, 100), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-	  cv::putText(img_input, countCDstr, cv::Point(5, 125), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-	  cv::putText(img_input, countDCstr, cv::Point(5, 150), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
-	  cv::putText(img_input, total, cv::Point(5, 175), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+	cv::putText(img_input, countABstr, cv::Point(5, 75), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+	cv::putText(img_input, countBAstr, cv::Point(5, 100), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+	cv::putText(img_input, countCDstr, cv::Point(5, 125), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+	cv::putText(img_input, countDCstr, cv::Point(5, 150), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+	cv::putText(img_input, total, cv::Point(5, 175), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
   }
   // Only Display A->B
-  if (showAB == 1){
-	  cv::putText(img_input, countABstr, cv::Point(1100, img_h - 120), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+  if (showAB == 1) {
+	cv::putText(img_input, countABstr, cv::Point(1100, img_h - 120), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
   }
   // Only Display B->A
-  if (showAB == 2){
-	  cv::putText(img_input, countBAstr, cv::Point(1100, img_h - 80), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
+  if (showAB == 2) {
+	cv::putText(img_input, countBAstr, cv::Point(1100, img_h - 80), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 0, 255), 2);
   }
   
-
-  if (showOutput){
-    cv::imshow("PedCount", img_input);
+if (showOutput) {
+	cv::imshow("PedCount", img_input);
 	cv::moveWindow("PedCount", 0, 0);
-  }
-  if (firstTime){
-    saveConfig();
-	}
-  firstTime = false;
+}
+if (firstTime){
+	saveConfig();
+}
+	firstTime = false;
 }
 //--------------------------------------------------------------------------------
+// Get rid of pedestrian who has been counted in the recent crossing
 bool VehicleCouting::idExisted(int id, int direction) {
 	for (int i = 0; i < id_List.size(); i++) {
 		//if (id_List.at(i) == id && direction_List.at(i) == direction) {
@@ -422,59 +419,57 @@ bool VehicleCouting::idExisted(int id, int direction) {
 	return false;
 }
 //--------------------------------------------------------------------------------
-void VehicleCouting::saveConfig()
-{
-  CvFileStorage* fs = cvOpenFileStorage("config/PedCount.xml", 0, CV_STORAGE_WRITE);
-  //这个名字还没改
-  cvWriteInt(fs, "showOutput", showOutput);
-  cvWriteInt(fs, "showAB", showAB);
+void VehicleCouting::saveConfig() {
+	CvFileStorage* fs = cvOpenFileStorage("config/PedCount.xml", 0, CV_STORAGE_WRITE);
   
-  cvWriteInt(fs, "fav1_use_roi", FAV1::use_roi);
-  cvWriteInt(fs, "fav1_roi_defined", FAV1::roi_defined);
-  cvWriteInt(fs, "line_A_x0", FAV1::line_A_x0);
-  cvWriteInt(fs, "line_A_y0", FAV1::line_A_y0);
-  cvWriteInt(fs, "line_A_x1", FAV1::line_A_x1);
-  cvWriteInt(fs, "line_A_y1", FAV1::line_A_y1);
-  cvWriteInt(fs, "line_B_x0", FAV1::line_B_x0);
-  cvWriteInt(fs, "line_B_y0", FAV1::line_B_y0);
-  cvWriteInt(fs, "line_B_x1", FAV1::line_B_x1);
-  cvWriteInt(fs, "line_B_y1", FAV1::line_B_y1);
-  cvWriteInt(fs, "line_C_x0", FAV1::line_C_x0);
-  cvWriteInt(fs, "line_C_y0", FAV1::line_C_y0);
-  cvWriteInt(fs, "line_C_x1", FAV1::line_C_x1);
-  cvWriteInt(fs, "line_C_y1", FAV1::line_C_y1);
-  cvWriteInt(fs, "line_D_x0", FAV1::line_D_x0);
-  cvWriteInt(fs, "line_D_y0", FAV1::line_D_y0);
-  cvWriteInt(fs, "line_D_x1", FAV1::line_D_x1);
-  cvWriteInt(fs, "line_D_y1", FAV1::line_D_y1);
+	cvWriteInt(fs, "showOutput", showOutput);
+	cvWriteInt(fs, "showAB", showAB);
 
-  cvReleaseFileStorage(&fs);
+	cvWriteInt(fs, "fav1_use_roi", FAV1::use_roi);
+	cvWriteInt(fs, "fav1_roi_defined", FAV1::roi_defined);
+	cvWriteInt(fs, "line_A_x0", FAV1::line_A_x0);
+	cvWriteInt(fs, "line_A_y0", FAV1::line_A_y0);
+	cvWriteInt(fs, "line_A_x1", FAV1::line_A_x1);
+	cvWriteInt(fs, "line_A_y1", FAV1::line_A_y1);
+	cvWriteInt(fs, "line_B_x0", FAV1::line_B_x0);
+	cvWriteInt(fs, "line_B_y0", FAV1::line_B_y0);
+	cvWriteInt(fs, "line_B_x1", FAV1::line_B_x1);
+	cvWriteInt(fs, "line_B_y1", FAV1::line_B_y1);
+	cvWriteInt(fs, "line_C_x0", FAV1::line_C_x0);
+	cvWriteInt(fs, "line_C_y0", FAV1::line_C_y0);
+	cvWriteInt(fs, "line_C_x1", FAV1::line_C_x1);
+	cvWriteInt(fs, "line_C_y1", FAV1::line_C_y1);
+	cvWriteInt(fs, "line_D_x0", FAV1::line_D_x0);
+	cvWriteInt(fs, "line_D_y0", FAV1::line_D_y0);
+	cvWriteInt(fs, "line_D_x1", FAV1::line_D_x1);
+	cvWriteInt(fs, "line_D_y1", FAV1::line_D_y1);
+
+	cvReleaseFileStorage(&fs);
 }
 //--------------------------------------------------------------------------------
-void VehicleCouting::loadConfig()
-{
-  CvFileStorage* fs = cvOpenFileStorage("config/PedCount.xml", 0, CV_STORAGE_READ);
-  /* int cvReadIntByName(const CvFileStorage* fs, const CvFileNode* map, const char* name, int default_value=0 ) */
-  showOutput = cvReadIntByName(fs, 0, "showOutput", true);
-  showAB = cvReadIntByName(fs, 0, "showAB", 1);
+void VehicleCouting::loadConfig() {
+	CvFileStorage* fs = cvOpenFileStorage("config/PedCount.xml", 0, CV_STORAGE_READ);
+	/* int cvReadIntByName(const CvFileStorage* fs, const CvFileNode* map, const char* name, int default_value=0 ) */
+	showOutput = cvReadIntByName(fs, 0, "showOutput", true);
+	showAB = cvReadIntByName(fs, 0, "showAB", 1);
   
-  FAV1::use_roi = cvReadIntByName(fs, 0, "fav1_use_roi", true);
-  FAV1::roi_defined = cvReadIntByName(fs, 0, "fav1_use_roi", false);
-  FAV1::line_A_x0 = cvReadIntByName(fs, 0, "line_A_x0", 0);
-  FAV1::line_A_y0 = cvReadIntByName(fs, 0, "line_A_y0", 0);
-  FAV1::line_A_x1 = cvReadIntByName(fs, 0, "line_A_x1", 0);
-  FAV1::line_A_y1 = cvReadIntByName(fs, 0, "line_A_y1", 0);
-  FAV1::line_B_x0 = cvReadIntByName(fs, 0, "line_B_x0", 0);
-  FAV1::line_B_y0 = cvReadIntByName(fs, 0, "line_B_y0", 0);
-  FAV1::line_B_x1 = cvReadIntByName(fs, 0, "line_B_x1", 0);
-  FAV1::line_B_y1 = cvReadIntByName(fs, 0, "line_B_y1", 0);
-  FAV1::line_C_x0 = cvReadIntByName(fs, 0, "line_C_x0", 0);
-  FAV1::line_C_y0 = cvReadIntByName(fs, 0, "line_C_y0", 0);
-  FAV1::line_C_x1 = cvReadIntByName(fs, 0, "line_C_x1", 0);
-  FAV1::line_C_y1 = cvReadIntByName(fs, 0, "line_C_y1", 0);
-  FAV1::line_D_x0 = cvReadIntByName(fs, 0, "line_D_x0", 0);
-  FAV1::line_D_y0 = cvReadIntByName(fs, 0, "line_D_y0", 0);
-  FAV1::line_D_x1 = cvReadIntByName(fs, 0, "line_D_x1", 0);
-  FAV1::line_D_y1 = cvReadIntByName(fs, 0, "line_D_y1", 0);
-  cvReleaseFileStorage(&fs);
+	FAV1::use_roi = cvReadIntByName(fs, 0, "fav1_use_roi", true);
+	FAV1::roi_defined = cvReadIntByName(fs, 0, "fav1_use_roi", false);
+	FAV1::line_A_x0 = cvReadIntByName(fs, 0, "line_A_x0", 0);
+	FAV1::line_A_y0 = cvReadIntByName(fs, 0, "line_A_y0", 0);
+	FAV1::line_A_x1 = cvReadIntByName(fs, 0, "line_A_x1", 0);
+	FAV1::line_A_y1 = cvReadIntByName(fs, 0, "line_A_y1", 0);
+	FAV1::line_B_x0 = cvReadIntByName(fs, 0, "line_B_x0", 0);
+	FAV1::line_B_y0 = cvReadIntByName(fs, 0, "line_B_y0", 0);
+	FAV1::line_B_x1 = cvReadIntByName(fs, 0, "line_B_x1", 0);
+	FAV1::line_B_y1 = cvReadIntByName(fs, 0, "line_B_y1", 0);
+	FAV1::line_C_x0 = cvReadIntByName(fs, 0, "line_C_x0", 0);
+	FAV1::line_C_y0 = cvReadIntByName(fs, 0, "line_C_y0", 0);
+	FAV1::line_C_x1 = cvReadIntByName(fs, 0, "line_C_x1", 0);
+	FAV1::line_C_y1 = cvReadIntByName(fs, 0, "line_C_y1", 0);
+	FAV1::line_D_x0 = cvReadIntByName(fs, 0, "line_D_x0", 0);
+	FAV1::line_D_y0 = cvReadIntByName(fs, 0, "line_D_y0", 0);
+	FAV1::line_D_x1 = cvReadIntByName(fs, 0, "line_D_x1", 0);
+	FAV1::line_D_y1 = cvReadIntByName(fs, 0, "line_D_y1", 0);
+	cvReleaseFileStorage(&fs);
 }

@@ -1,0 +1,3 @@
+	Green light				Yellow light				Red light
+Sec.	Blue	Green	Red	Mean	Blue	Green	Red	Mean	Blue	Green	Red	Mean
+1	89	 130	 13	 91	63	 40	 54	 53	52	 22	 32	 37
