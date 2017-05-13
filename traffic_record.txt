@@ -1,0 +1,2 @@
+	Green light				Yellow light				Red light
+Second	Blue	Green	Red	Mean	Blue	Green	Red	Mean	Blue	Green	Red	Mean

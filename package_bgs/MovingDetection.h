@@ -34,7 +34,7 @@
 #include <direct.h> 
 #include <stdlib.h>
 #include <ctype.h>
-#include <windows.h>
+
 
 #include "../package_tracking/BlobTracking.h"
 #include "../package_analysis/VehicleCouting.h"
@@ -69,10 +69,10 @@ private:
 	// imported from signal detection
 	bool isRunning = true;
 	cv::String command = "";
-	ofstream record, signalChange;
+	ofstream record, signalChange, jaywalkList;
 	cv::String fileType;
 	bool everySecond;
-	int fps, counter, secondCount, presentSignal, lightDisplayLocationX;
+	int fps, counter, secCount, presentSignal, lightDisplayLocationX;
 	double prevMeanG, prevMeanY, prevMeanR, sensitivity;
 	// Sequence:
 	// First[3]: Green Light, Yellow Light, Red Light
@@ -81,8 +81,10 @@ private:
 
 public:
 
+	// This bool determines whether output each frame
+	bool outputEachFrame;
 	cv::Mat output, mask;
-	std::string fileName, fileName2, fullAddr, fullAddr2;
+	std::string fileName, fileName2, fileName3, fullAddr, fullAddr2, fullAddr3;
 	//Constructor
 	MovingDetection();
 	

@@ -17,28 +17,50 @@ MovingDetection::MovingDetection(){
 void MovingDetection::menu(){
 	Record recordWritter;
 
-	fileName = "20160328_111739_x685_y216";
-	fullAddr = "D:/ECE698_Proj/test_video_library/LightRecognitionAndPedCount/" + fileName + ".avi";
-	fileName2 = "20160401_150426";
-	fullAddr2 = "D:/ECE698_Proj/test_video_library/" + fileName2 + ".avi";
+	fileName = "";
+
 	bool isNewVideo = true;
 	bool stillworking = true;
 	while (stillworking){
 
+		std::string makeoutput;
+		cout << "\n\nDo you want to output each frame? (T/F)\n\n\t\t" << endl;
+		cin >> makeoutput;
+		if (makeoutput == "T" || makeoutput == "t") {
+			outputEachFrame = true;
+		}
+		else if (makeoutput == "F" || makeoutput == "f") {
+			outputEachFrame = false;
+		}
 		//prints out the menu options the user can choose from
 		cout << "Select one of the options below\n\n";
 		
-		cout << "\t10. Test normal scene\n";
-		cout << "\t11. Test burst scene\n\n\n";
-
-		cout << "\t0. Play sample video\n";
-		cout << "\t4. End Program\n\n";
+		cout << "\tType '1' for typing the video filename\n";
+		cout << "\tType '0' for exit\n\n";
 
 		//prompts the user for an option number then carries out a command based
 		//off of the option number provided
 		int option = readInt("Enter Option Number: ");
 		
-		if (option == 10) {
+		if (option == 1) {
+			cout << "Please enter YYYYMMDDHHMMSS of video:\n\t";
+			std::cin >> fileName;
+			std::string color;
+			cout << "\nWhat is the traffic light color for the first second? It's red, yellow or green?\n\t\t\t";
+			std::cin >> color;
+			//Theoretically, the signal sequence is 1-2-3-1(cycle)
+			//Present signal status: Green-1, Yellow-2, Red-3
+			if (color == "red") {
+				presentSignal = 3;
+			} else if (color == "yellow") {
+				presentSignal = 2;
+			} else if (color == "green") {
+				presentSignal = 1;
+			}
+			// Default video repository. Change it with your own repository folder location.
+			// "manual_" is the prefix for the video sample, then follow by its YYYYMMDDHHMMSS
+			fullAddr = "C:/manual_" + fileName + ".avi";
+
 			if (!fullAddr.empty()){
 				cv::Mat background = cv::imread(fileName + ".jpg");
 				if (!background.empty()) {
@@ -52,20 +74,7 @@ void MovingDetection::menu(){
 				recordWritter.openRecord(fullAddr);
 				filterMovingObjects(fullAddr);
 			}
-		}
-		if (option == 11) {
-			if (!fullAddr2.empty()){
-				getBackground(fileName2, fullAddr2);
-				isNewVideo = false;
-				filterMovingObjects(fullAddr2);
-			}
-		}
-
-		else if (option == 0){
-			readVideo(fullAddr);
-			playVideo();
-		}
-		else if (option == 4){
+		} else if (option == 0){
 			stillworking = false;
 		}
 	}
@@ -365,7 +374,7 @@ int MovingDetection::whatIsTheFrameNumber(){
 	return counter;
 }
 /*
-	本method每一帧都会执行
+	This method would be called for each frame
 	Check whether the traffic light is green or not,
 	then update "bool isGreenLight" variable.
 */
@@ -378,9 +387,9 @@ void MovingDetection::checkTrafficSignal(cv::Mat &frame){
 	cv::Size enlarge_ratio(75, 100);
 	counter++;
 	if (counter % fps == 0){
-		secondCount++;
-		int min = secondCount / 60;
-		int sec = secondCount % 60;
+		secCount++;
+		int min = secCount / 60;
+		int sec = secCount % 60;
 		if (presentSignal == 1) {
 			cout << min << " min " << sec << " sec:\tGreen Signal " << endl;
 		}
@@ -391,6 +400,7 @@ void MovingDetection::checkTrafficSignal(cv::Mat &frame){
 			cout << min << " min " << sec << " sec:\tRed Signal" << endl;
 		}
 	}
+	
 	everySecond = (counter % fps == 0);
 	//zoomIn("green");
 	frame(g).copyTo(green);
@@ -405,21 +415,21 @@ void MovingDetection::checkTrafficSignal(cv::Mat &frame){
 		int cr = (int)avgPixelIntensityG.val[2];
 		double m = (cb + cg + cr) / 3;
 		double mean = sqrt(((cb)*(cb)+(cg)*(cg)+(cr)*(cr)) / 3);
-		bool greenRule = (secondCount > 1) && (presentSignal != 1) && ((cb - previous[0][0] >= sensitivity * sensitivity * prevMeanG) && (cg - previous[0][1] >= sensitivity * prevMeanG));
+		bool greenRule = (secCount > 1) && (presentSignal != 1) && ((cb - previous[0][0] >= sensitivity * sensitivity * prevMeanG) && (cg - previous[0][1] >= sensitivity * prevMeanG));
 		if (greenRule){
-			//if ((secondCount > 1) && ((mean - prevMeanG)>prevMeanG)){
+			//if ((secCount > 1) && ((mean - prevMeanG)>prevMeanG)){
 			presentSignal = 1;
 			cout << "\n\n\t\tGreen light signal!\n" << endl;
-			signalChange << "Green light signal: " << secondCount << "th Sec\n";
-			isGreenLight = true;
+			signalChange << "Green light signal: " << secCount << "th Sec\n";
+			//isGreenLight = true;
 		}
 		previous[0][0] = cb;
 		previous[0][1] = cg;
 		previous[0][2] = cr;
 		prevMeanG = mean;
 		//cout << "Green:\t" << cb << "\t " << cg << "\t " << cr << "\t " << (int)mean;
-		record << secondCount << "\t" << cb << "\t " << cg << "\t " << cr << "\t " << (int)mean;
-
+		record << secCount << "\t" << cb << "\t " << cg << "\t " << cr << "\t " << (int)mean;
+		
 	}
 
 
@@ -436,13 +446,13 @@ void MovingDetection::checkTrafficSignal(cv::Mat &frame){
 		int cr = (int)avgPixelIntensityY.val[2];
 		double m = (cb + cg + cr) / 3;
 		double mean = sqrt(((cb)*(cb)+(cg)*(cg)+(cr)*(cr)) / 3);
-		bool yellowRule = (secondCount > 1) && (presentSignal != 2) && (cg - previous[1][1] >= sensitivity * prevMeanY) && (cr - previous[1][2] >= sensitivity * prevMeanY);
+		bool yellowRule = (secCount > 1) && (presentSignal != 2) && (cg - previous[1][1] >= sensitivity * prevMeanY) && (cr - previous[1][2] >= sensitivity * prevMeanY);
 		if (yellowRule){
-			//if ((secondCount > 1) && ((mean - prevMeanY)>prevMeanY)){
+			//if ((secCount > 1) && ((mean - prevMeanY)>prevMeanY)){
 			presentSignal = 2;
 			cout << "\n\n\t\tYellow light signal!\n" << endl;
-			signalChange << "Yellow light signal: " << secondCount << "th Sec\n";
-			isGreenLight = false;
+			signalChange << "Yellow light signal: " << secCount << "th Sec\n";
+			//isGreenLight = false;
 		}
 		previous[1][0] = cb;
 		previous[1][1] = cg;
@@ -468,18 +478,25 @@ void MovingDetection::checkTrafficSignal(cv::Mat &frame){
 		//cout << "\tRed:\t" << cb << "\t " << cg << "\t " << cr << "\t " << int(mean) << endl;
 		record << "\t" << cb << "\t " << cg << "\t " << cr << "\t " << int(mean) << endl;
 		bool redPrerequisite = (presentSignal != 3);
-		bool redRule = (secondCount > 1) && redPrerequisite && ((cr - previous[2][2]) > sensitivity * prevMeanR);
+		bool redRule = (secCount > 1) && redPrerequisite && ((cr - previous[2][2]) > sensitivity * prevMeanR);
 		if (redRule){
-			//if ((secondCount > 1) && ((mean - prevMeanR)>prevMeanR)){
+			//if ((secCount > 1) && ((mean - prevMeanR)>prevMeanR)){
 			presentSignal = 3;
 			cout << "\n\n\t\tRed light signal!\n" << endl;
-			signalChange << "Red light signal: " << secondCount << "th Sec\n";
-			isGreenLight = false;
+			signalChange << "Red light signal: " << secCount << "th Sec\n";
+			//isGreenLight = false;
 		}
 		previous[2][0] = cb;
 		previous[2][1] = cg;
 		previous[2][2] = cr;
-		prevMeanR = mean;
+		prevMeanR = mean;		
+	}
+	//Avoid multiple (red) signal
+	//Theoretically, the signal sequence is 1-2-3-1(cycle)
+	//Present signal status: Green-1, Yellow-2, Red-3
+	if (counter == 1) {
+		// To be developed
+		// This module checks the color for the first frame:
 	}
 }
 
@@ -492,30 +509,39 @@ void MovingDetection::filterMovingObjects(string address1){
 	//get the frame rate of the video
 	fps = capSrc.get(CV_CAP_PROP_FPS);
 	if (fps == 90000) {
-		fps = 30;
+		fps = 30; // For some MKV files the frame rate unit is messed.
 	}
 
-	/* 1. Traffic Light Recognition Module */
-	isGreenLight = true;
+	//isGreenLight = false; // Default light color
 	lightDisplayLocationX = 1280;
-	x1 = 685;
-	y1 = 216;
+	/* 
+		1. Traffic Light Recognition Module 
+	*/
+	x1 = 679;
+	y1 = 204;
 	gap = 8;
 	display_Ped_Light = false;
+	/*
+		The upper left corner location of red light :
+		x1 = 685;
+		Mar28 Before 12pm: 684, 216
+		Mar28 1pm: 684, 207
+		After: 678, 208
+	*/
 	sensitivity = 0.5;
-	record.open("traffic_record_" + fileName + ".txt");
+	record.open("traffic_record_" + fileName3 + ".txt");
 	signalChange.open("tmp.txt");
+	jaywalkList.open("jaywalk.txt");
+	jaywalkList << "Frame #\t" << "Direction\t" << "Color\t" << "X_Location\t" << "Y_Location\t" << std::endl;
+	jaywalkList.close(); 
 	cout << "This is Crosswalk Scene from EE238\n\nFrame per seconds :\t" << fps << endl;
 	counter = 0;
-	secondCount = 0;
+	secCount = 0;
 	prevMeanG = 0;
 	prevMeanY = 0;
 	prevMeanR = 0;
 	
-	//Avoid multiple (red) signal
-	//Theoretically, the signal sequence is 1-2-3-1(cycle)
-	//Present signal status: Green-1, Yellow-2, Red-3
-	presentSignal = 1; //Default Value-Green should be the very beginning signal.
+	
 	record << "\tGreen light\t\t\t" << "\tYellow light\t\t\t" << "\tRed light" << endl;
 	record << "Sec." << "\tBlue\tGreen\tRed\tMean" << "\tBlue\tGreen\tRed\tMean" << "\tBlue\tGreen\tRed\tMean" << endl;
 
@@ -565,14 +591,14 @@ void MovingDetection::filterMovingObjects(string address1){
 	//background subtractor for the frames
 	//http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html#backgroundsubtractormog2
 	cv::BackgroundSubtractorMOG2 bg = cv::BackgroundSubtractorMOG2();
-	bg.set("history", 1000);
+	bg.set("history", 80);
 	bg.set("nmixtures", 3);
 	bg.set("backgroundRatio", 0.7);
 	bg.set("detectShadows", false);
 
 	//background subtractor for the filterTotalBackground results
 	cv::BackgroundSubtractorMOG2 bg2 = cv::BackgroundSubtractorMOG2();
-	bg2.set("history", 1000);
+	bg2.set("history", 80);
 	bg2.set("nmixtures", 3);
 	bg2.set("backgroundRatio", 0.7);
 	bg2.set("detectShadows", false);
@@ -592,6 +618,9 @@ void MovingDetection::filterMovingObjects(string address1){
 			cReadable = false;
 			break;
 		}
+		// To see whether the signal is green.
+		checkTrafficSignal(frame);
+		
 		//find the moving objects in results of the filterTotalBackground function
 		cv::Mat total = filterTotalBackground(frame);
 
@@ -600,7 +629,7 @@ void MovingDetection::filterMovingObjects(string address1){
 		bg.operator()(total, fore);
 
 		//Computes a background image.
-		//C++: void BackgroundSubtractor::getBackgroundImage(OutputArray backgroundImage) const¶
+		//C++: void BackgroundSubtractor::getBackgroundImage(OutputArray backgroundImage) const
 		bg.getBackgroundImage(back);
 
 		
@@ -620,18 +649,30 @@ void MovingDetection::filterMovingObjects(string address1){
 
 		//combine the two images and cv::blur  and cv::threshold the results
 		dst = fore & fore2;
-		cv::blur(dst, dst, cv::Size(5, 5));
-		cv::blur(dst, dst, cv::Size(5, 5));
-		cv::blur(dst, dst, cv::Size(5, 5));
-		cv::threshold(dst, dst, 50, 255, cv::THRESH_BINARY);
+		cv::GaussianBlur(dst, dst, cv::Size(5, 5), 0, 0, cv::BORDER_REPLICATE);
+		cv::GaussianBlur(dst, dst, cv::Size(5, 5), 0, 0, cv::BORDER_REPLICATE);
+		//cv::GaussianBlur(dst, dst, cv::Size(8, 8), 0, 0, cv::BORDER_REPLICATE);
+		cv::blur(dst, dst, cv::Size(8, 8));
+		cv::threshold(dst, dst, 20, 255, cv::THRESH_BINARY);
 
-		// To see whether the signal is green.
-		checkTrafficSignal(frame);
+		
+		cv::namedWindow("PedCount", CV_WINDOW_KEEPRATIO);
+		cv::createTrackbar("x1", "PedCount", &x1, 690);
+		cv::createTrackbar("y1", "PedCount", &y1, 220);
+		// Perform blob tracking
+		// img_blob: Transform gray-scale frame into blob diagram
+		blobTracking->process(frame, dst, img_blob);
+		// Perform vehicle counting
+		vehicleCouting->setInput(img_blob);
+		vehicleCouting->setTracks(blobTracking->getTracks());
+		vehicleCouting->process(counter, presentSignal, outputEachFrame);
+		
+		/*
 		if (readyToGo) {
 			cv::namedWindow("Traffic light is not green", CV_WINDOW_AUTOSIZE);
 			readyToGo = false; // So that this part will only run once
 		}
-		// The following code should be started to execute when the traffic light turns GREEN
+		// The following code should be started to execute when the traffic light turns GREEN ONLY
 		// When it is not green light, stop running this part
 		if (isGreenLight) {
 			cv::destroyWindow("Traffic light is not green");
@@ -648,10 +689,10 @@ void MovingDetection::filterMovingObjects(string address1){
 			cv::destroyWindow("PedCount");
 			cv::imshow("Traffic light is not green", frame);
 			cv::moveWindow("Traffic light is not green", 0, 0);
-			cv::createTrackbar("x1", "Traffic light is not green", &x1, 1100);
-			cv::createTrackbar("y1", "Traffic light is not green", &y1, 600);
+			cv::putText(frame, "Frame " + std::to_string(counter), cv::Point(95, 40), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255), 2);
+			
 		}
-
+		*/
 
 		/*
 		//find all the object contours in the image
@@ -677,10 +718,12 @@ void MovingDetection::filterMovingObjects(string address1){
 			box = cv::Rect(boundRect[i].tl(), boundRect[i].br());
 		}
 		*/
-
+		
 		cv::pyrDown(dst, smallDst, cv::Size(dst.cols / 2, dst.rows / 2));
 		cv::imshow("Foreground Mask", smallDst);
-		cv::moveWindow("Foreground Mask", 1100, 0);
+		//cv::moveWindow("Foreground Mask", 1100, 0);
+		
+		
 		if (cv::waitKey(1) == 27){
 			cout << "Press 'ESC' to exit" << endl;
 			notPressEsc = false;

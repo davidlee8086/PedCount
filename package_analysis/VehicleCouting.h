@@ -1,12 +1,21 @@
 ﻿#pragma once
 
-#include <windows.h>
-#include <fstream>
 #include <iostream>
-#include <vector>
-#include <string>
 #include <cv.h>
 #include <highgui.h>
+#include <windows.h>
+
+#include <string>
+#include <vector>
+#include <numeric>
+#include <stdio.h>
+#include <process.h>
+#include <direct.h> 
+#include <stdlib.h>
+#include <ctype.h>
+
+
+#include <fstream>
 #include <math.h> 
 #include "../package_tracking/cvblob/cvblob.h"
 
@@ -73,7 +82,7 @@ public:
   int it_indicator;
   void setInput(const cv::Mat &i);
   void setTracks(const cvb::CvTracks &t);
-  void process(int frameNumber);
+  void process(int frameNumber, int presentSignal, bool outputEachFrame);
   std::vector<int> id_List;
   std::vector<int> direction_List;
   bool idExisted(int id,int direction);
@@ -82,7 +91,9 @@ public:
 // imported from signal detection
   bool isRunning = true;
   std::string command = "";
-  std::ofstream record, signalChange;
+	std::ofstream jaywalkList;
+	std::string color;
+	
   std::string fileName, fileType;
   bool everySecond;
   int fps = 0;
@@ -91,7 +102,6 @@ public:
 
 private:
 	VehiclePosition getVehiclePosition(const CvPoint2D64f centroid, cvb::CvID id);
-
-  void saveConfig();
-  void loadConfig();
+	void saveConfig();
+	void loadConfig();
 };
