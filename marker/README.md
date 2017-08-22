@@ -1,4 +1,6 @@
-ps: You can name each folder with pure number like "1", "2" then move them to other path.
+ps: 
+You can name each folder with pure number like "1", "2" then move them to other path.
+
 Also their corresponding "label" folder needs to be moved away.
 
 
