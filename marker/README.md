@@ -1,5 +1,5 @@
-注：建议标哪个文件夹就给哪个文件夹命名为“1”，之后再改为其它并移走。并且，其对应的label文件夹也要改名并移走。
-
+ps: You can name each folder with pure number like "1", "2" then move them to other path.
+Also their corresponding "label" folder needs to be moved away.
 
 
 BBox-Label-Tool
